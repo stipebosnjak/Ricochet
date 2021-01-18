@@ -3,13 +3,13 @@
 # Get latest from https://github.com/github/gitignore/blob/master/Unity.gitignore
 #
 
-RotoDeath/[Ll]ibrary/
-RotoDeath/[Tt]emp/
-RotoDeath/[Oo]bj/
-RotoDeath/[Bb]uild/
-RotoDeath/[Bb]uilds/
-RotoDeath/[Ll]ogs/
-RotoDeath/[Uu]ser[Ss]ettings/
+Ricochet/[Ll]ibrary/
+Ricochet/[Tt]emp/
+Ricochet/[Oo]bj/
+Ricochet/[Bb]uild/
+Ricochet/[Bb]uilds/
+Ricochet/[Ll]ogs/
+Ricochet/[Uu]ser[Ss]ettings/
 
 # MemoryCaptures can get excessive in size.
 # They also could contain extremely sensitive data
