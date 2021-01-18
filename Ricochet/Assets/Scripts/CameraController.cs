@@ -5,7 +5,6 @@ using UnityEngine.InputSystem;
 
 public class CameraController : MonoBehaviour
 {
-    private Rigidbody _rigidbody;
     private Camera _camera;
     public float turnSpeed = 5;
     public float moveSpeed;
@@ -30,16 +29,6 @@ public class CameraController : MonoBehaviour
     public float ground = 2;
     public float height;
 
-    public Rigidbody RigidBody
-    {
-        get
-        {
-            if (_rigidbody == null)
-                _rigidbody = GetComponent<Rigidbody>();
-
-            return _rigidbody;
-        }
-    }
 
     public Camera Camera
     {
