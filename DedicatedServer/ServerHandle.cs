@@ -26,7 +26,6 @@ namespace DedicatedServer
             var position = packet.ReadVector3();
             var rotation = packet.ReadQuaternion();
 
-            Console.WriteLine(position);
             Server.Clients[fromClient].Player.SetInput(position, rotation);
         }
     }
