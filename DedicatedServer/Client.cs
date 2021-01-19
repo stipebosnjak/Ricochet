@@ -1,136 +1,134 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Net;
 using System.Net.Sockets;
 using System.Numerics;
 
-namespace GameServer
+namespace DedicatedServer
 {
     class Client
     {
-        public static int dataBufferSize = 4096;
+        public static int DataBufferSize = 4096;
 
-        public int id;
-        public Player player;
-        public TCP tcp;
-        public UDP udp;
+        public int Id;
+        public Player Player;
+        public TcpHelper Tcp { get; }
+        public UdpHelper Udp { get; }
 
-        public Client(int _clientId)
+        public Client(int clientId)
         {
-            id = _clientId;
-            tcp = new TCP(id);
-            udp = new UDP(id);
+            Id = clientId;
+            Tcp = new TcpHelper(Id);
+            Udp = new UdpHelper(Id);
         }
 
-        public class TCP
+        public class TcpHelper
         {
-            public TcpClient socket;
+            public TcpClient Socket;
 
-            private readonly int id;
-            private NetworkStream stream;
-            private Packet receivedData;
-            private byte[] receiveBuffer;
+            private readonly int _id;
+            private NetworkStream _stream;
+            private Packet _receivedData;
+            private byte[] _receiveBuffer;
 
-            public TCP(int _id)
+            public TcpHelper(int id)
             {
-                id = _id;
+                this._id = id;
             }
 
-            public void Connect(TcpClient _socket)
+            public void Connect(TcpClient socket)
             {
-                socket = _socket;
-                socket.ReceiveBufferSize = dataBufferSize;
-                socket.SendBufferSize = dataBufferSize;
+                Socket = socket;
+                Socket.ReceiveBufferSize = DataBufferSize;
+                Socket.SendBufferSize = DataBufferSize;
 
-                stream = socket.GetStream();
+                _stream = Socket.GetStream();
 
-                receivedData = new Packet();
-                receiveBuffer = new byte[dataBufferSize];
+                _receivedData = new Packet();
+                _receiveBuffer = new byte[DataBufferSize];
 
-                stream.BeginRead(receiveBuffer, 0, dataBufferSize, ReceiveCallback, null);
+                _stream.BeginRead(_receiveBuffer, 0, DataBufferSize, ReceiveCallback, null);
 
-                ServerSend.Welcome(id, "Welcome to the server!");
+                ServerSend.Welcome(_id, "Welcome to the server!");
             }
 
-            public void SendData(Packet _packet)
+            public void SendData(Packet packet)
             {
                 try
                 {
-                    if (socket != null)
+                    if (Socket != null)
                     {
-                        stream.BeginWrite(_packet.ToArray(), 0, _packet.Length(), null, null);
+                        _stream.BeginWrite(packet.ToArray(), 0, packet.Length(), null, null);
                     }
                 }
-                catch (Exception _ex)
+                catch (Exception ex)
                 {
-                    Console.WriteLine($"Error sending data to player {id} via TCP: {_ex}");
+                    Console.WriteLine($"Error sending data to player {_id} via TCP: {ex}");
                 }
             }
 
-            private void ReceiveCallback(IAsyncResult _result)
+            private void ReceiveCallback(IAsyncResult result)
             {
                 try
                 {
-                    int _byteLength = stream.EndRead(_result);
-                    if (_byteLength <= 0)
+                    int byteLength = _stream.EndRead(result);
+                    if (byteLength <= 0)
                     {
-                        Server.clients[id].Disconnect();
+                        Server.Clients[_id].Disconnect();
                         return;
                     }
 
-                    byte[] _data = new byte[_byteLength];
-                    Array.Copy(receiveBuffer, _data, _byteLength);
+                    byte[] data = new byte[byteLength];
+                    Array.Copy(_receiveBuffer, data, byteLength);
 
-                    receivedData.Reset(HandleData(_data));
-                    stream.BeginRead(receiveBuffer, 0, dataBufferSize, ReceiveCallback, null);
+                    _receivedData.Reset(HandleData(data));
+                    _stream.BeginRead(_receiveBuffer, 0, DataBufferSize, ReceiveCallback, null);
                 }
-                catch (Exception _ex)
+                catch (Exception ex)
                 {
-                    Console.WriteLine($"Error receiving TCP data: {_ex}");
-                    Server.clients[id].Disconnect();
+                    Console.WriteLine($"Error receiving TCP data: {ex}");
+                    Server.Clients[_id].Disconnect();
                 }
             }
 
-            private bool HandleData(byte[] _data)
+            private bool HandleData(byte[] data)
             {
-                int _packetLength = 0;
+                int packetLength = 0;
 
-                receivedData.SetBytes(_data);
+                _receivedData.SetBytes(data);
 
-                if (receivedData.UnreadLength() >= 4)
+                if (_receivedData.UnreadLength() >= 4)
                 {
-                    _packetLength = receivedData.ReadInt();
-                    if (_packetLength <= 0)
+                    packetLength = _receivedData.ReadInt();
+                    if (packetLength <= 0)
                     {
                         return true;
                     }
                 }
 
-                while (_packetLength > 0 && _packetLength <= receivedData.UnreadLength())
+                while (packetLength > 0 && packetLength <= _receivedData.UnreadLength())
                 {
-                    byte[] _packetBytes = receivedData.ReadBytes(_packetLength);
+                    byte[] packetBytes = _receivedData.ReadBytes(packetLength);
                     ThreadManager.ExecuteOnMainThread(() =>
                     {
-                        using (Packet _packet = new Packet(_packetBytes))
+                        using (Packet packet = new Packet(packetBytes))
                         {
-                            int _packetId = _packet.ReadInt();
-                            Server.packetHandlers[_packetId](id, _packet);
+                            int packetId = packet.ReadInt();
+                            Server.PacketHandlers[packetId](_id, packet);
                         }
                     });
 
-                    _packetLength = 0;
-                    if (receivedData.UnreadLength() >= 4)
+                    packetLength = 0;
+                    if (_receivedData.UnreadLength() >= 4)
                     {
-                        _packetLength = receivedData.ReadInt();
-                        if (_packetLength <= 0)
+                        packetLength = _receivedData.ReadInt();
+                        if (packetLength <= 0)
                         {
                             return true;
                         }
                     }
                 }
 
-                if (_packetLength <= 1)
+                if (packetLength <= 1)
                 {
                     return true;
                 }
@@ -140,88 +138,88 @@ namespace GameServer
 
             public void Disconnect()
             {
-                socket.Close();
-                stream = null;
-                receivedData = null;
-                receiveBuffer = null;
-                socket = null;
+                Socket.Close();
+                _stream = null;
+                _receivedData = null;
+                _receiveBuffer = null;
+                Socket = null;
             }
         }
 
-        public class UDP
+        public class UdpHelper
         {
-            public IPEndPoint endPoint;
+            public IPEndPoint EndPoint;
 
-            private int id;
+            private int _id;
 
-            public UDP(int _id)
+            public UdpHelper(int id)
             {
-                id = _id;
+                this._id = id;
             }
 
-            public void Connect(IPEndPoint _endPoint)
+            public void Connect(IPEndPoint endPoint)
             {
-                endPoint = _endPoint;
+                EndPoint = endPoint;
             }
 
-            public void SendData(Packet _packet)
+            public void SendData(Packet packet)
             {
-                Server.SendUDPData(endPoint, _packet);
+                Server.SendUdpData(EndPoint, packet);
             }
 
-            public void HandleData(Packet _packetData)
+            public void HandleData(Packet packetData)
             {
-                int _packetLength = _packetData.ReadInt();
-                byte[] _packetBytes = _packetData.ReadBytes(_packetLength);
+                int packetLength = packetData.ReadInt();
+                byte[] packetBytes = packetData.ReadBytes(packetLength);
 
                 ThreadManager.ExecuteOnMainThread(() =>
                 {
-                    using (Packet _packet = new Packet(_packetBytes))
+                    using (Packet packet = new Packet(packetBytes))
                     {
-                        int _packetId = _packet.ReadInt();
-                        Server.packetHandlers[_packetId](id, _packet);
+                        int packetId = packet.ReadInt();
+                        Server.PacketHandlers[packetId](_id, packet);
                     }
                 });
             }
 
             public void Disconnect()
             {
-                endPoint = null;
+                EndPoint = null;
             }
         }
 
-        public void SendIntoGame(string _playerName)
+        public void SendIntoGame(string playerName)
         {
-            player = new Player(id, _playerName, new Vector3(0, 0, 0));
+            Player = new Player(Id, playerName, new Vector3(0, 0, 0));
 
-            foreach (Client _client in Server.clients.Values)
+            foreach (Client client in Server.Clients.Values)
             {
-                if (_client.player != null)
+                if (client.Player != null)
                 {
-                    if (_client.id != id)
+                    if (client.Id != Id)
                     {
-                        ServerSend.SpawnPlayer(id, _client.player);
+                        ServerSend.SpawnPlayer(Id, client.Player);
                     }
                 }
             }
 
-            foreach (Client _client in Server.clients.Values)
+            foreach (Client client in Server.Clients.Values)
             {
-                if (_client.player != null)
+                if (client.Player != null)
                 {
-                    ServerSend.SpawnPlayer(_client.id, player);
+                    ServerSend.SpawnPlayer(client.Id, Player);
                 }
             }
         }
 
         private void Disconnect()
         {
-            Console.WriteLine($"{tcp.socket.Client.RemoteEndPoint} has disconnected.");
+            Console.WriteLine($"{Tcp.Socket.Client.RemoteEndPoint} has disconnected.");
 
-            player = null;
+            Player = null;
 
-            tcp.Disconnect();
-            udp.Disconnect();
+            Tcp.Disconnect();
+            Udp.Disconnect();
         }
     }
 }

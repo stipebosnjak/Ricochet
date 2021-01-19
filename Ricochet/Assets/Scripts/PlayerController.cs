@@ -1,24 +1,21 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-public class PlayerController : MonoBehaviour
+namespace Assets.Scripts
 {
-    private void FixedUpdate()
+    public class PlayerController : MonoBehaviour
     {
-      //  SendInputToServer();
-    }
+        private void FixedUpdate()
+        {
+            SendInputToServer();
+        }
 
-    private void SendInputToServer()
-    {
-        // bool[] _inputs = new bool[]
-        // {
-        //     false,
-        //     true,
-        //     false,
-        //     true,
-        // };
-
-       // ClientSend.PlayerMovement(_inputs);
+        private void SendInputToServer()
+        {
+            ClientSend.PlayerMovement(new PlayerTransform()
+            {
+                Position = transform.position,
+                Rotation = transform.rotation
+            });
+        }
     }
 }

@@ -207,7 +207,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1034939995}
-        m_TargetAssemblyTypeName: 
+        m_TargetAssemblyTypeName: Assets.Scripts.UiManager, Assembly-CSharp
         m_MethodName: ConnectToServer
         m_Mode: 1
         m_Arguments:
@@ -803,6 +803,63 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1001 &1535774502
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 8448430433055406023, guid: aca86e94263cd2648a44a44dd323a19a, type: 3}
+      propertyPath: m_RootOrder
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 8448430433055406023, guid: aca86e94263cd2648a44a44dd323a19a, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -4.9161377
+      objectReference: {fileID: 0}
+    - target: {fileID: 8448430433055406023, guid: aca86e94263cd2648a44a44dd323a19a, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8448430433055406023, guid: aca86e94263cd2648a44a44dd323a19a, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 13.707911
+      objectReference: {fileID: 0}
+    - target: {fileID: 8448430433055406023, guid: aca86e94263cd2648a44a44dd323a19a, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.999962
+      objectReference: {fileID: 0}
+    - target: {fileID: 8448430433055406023, guid: aca86e94263cd2648a44a44dd323a19a, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8448430433055406023, guid: aca86e94263cd2648a44a44dd323a19a, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0.008726465
+      objectReference: {fileID: 0}
+    - target: {fileID: 8448430433055406023, guid: aca86e94263cd2648a44a44dd323a19a, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8448430433055406023, guid: aca86e94263cd2648a44a44dd323a19a, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8448430433055406023, guid: aca86e94263cd2648a44a44dd323a19a, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: -1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8448430433055406023, guid: aca86e94263cd2648a44a44dd323a19a, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8448430433055406043, guid: aca86e94263cd2648a44a44dd323a19a, type: 3}
+      propertyPath: m_Name
+      value: Floor
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: aca86e94263cd2648a44a44dd323a19a, type: 3}
 --- !u!1 &1537687708
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,9 +1,10 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-public class PlayerManager : MonoBehaviour
+namespace Assets.Scripts
 {
-    public int id;
-    public string username;
+    public class PlayerManager : MonoBehaviour
+    {
+        public int id;
+        public string username;
+    }
 }

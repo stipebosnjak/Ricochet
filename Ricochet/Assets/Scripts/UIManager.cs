@@ -1,32 +1,33 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
-public class UIManager : MonoBehaviour
+namespace Assets.Scripts
 {
-    public static UIManager instance;
-
-    public GameObject startMenu;
-    public InputField usernameField;
-
-    private void Awake()
+    public class UiManager : MonoBehaviour
     {
-        if (instance == null)
-        {
-            instance = this;
-        }
-        else if (instance != this)
-        {
-            Debug.Log("Instance already exists, destroying object!");
-            Destroy(this);
-        }
-    }
+        public static UiManager Instance;
 
-    public void ConnectToServer()
-    {
-        startMenu.SetActive(false);
-        usernameField.interactable = false;
-        Client.instance.ConnectToServer();
+        public GameObject startMenu;
+        public InputField usernameField;
+
+        private void Awake()
+        {
+            if (Instance == null)
+            {
+                Instance = this;
+            }
+            else if (Instance != this)
+            {
+                Debug.Log("Instance already exists, destroying object!");
+                Destroy(this);
+            }
+        }
+
+        public void ConnectToServer()
+        {
+            startMenu.SetActive(false);
+            usernameField.interactable = false;
+            Client.Instance.ConnectToServer();
+        }
     }
 }

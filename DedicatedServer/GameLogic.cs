@@ -1,24 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace GameServer
+﻿namespace DedicatedServer
 {
     class GameLogic
     {
 
         public static void Update()
         {
-            foreach (Client _client in Server.clients.Values)
+            foreach (Client client in Server.Clients.Values)
             {
-                if (_client.player != null)
+                if (client.Player != null)
                 {
-                    _client.player.Update();
+                    client.Player.Update();
                 }
             }
 
             ThreadManager.UpdateMain();
-
         }
 
         

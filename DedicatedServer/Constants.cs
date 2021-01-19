@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace GameServer
+﻿namespace DedicatedServer
 {
-    class Constants
+   public class Constants
     {
-        public const int TICKS_PER_SEC = 30;
-        public const float MS_PER_TICK = 1000f / TICKS_PER_SEC;
+        public const int TicksPerSec = 30;
+        public const float MsPerTick = 1000f / TicksPerSec;
     }
 }

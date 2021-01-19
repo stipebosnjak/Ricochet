@@ -1,43 +1,45 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
-public class GameManager : MonoBehaviour
+namespace Assets.Scripts
 {
-    public static GameManager instance;
-
-    public static Dictionary<int, PlayerManager> players = new Dictionary<int, PlayerManager>();
-
-    public GameObject localPlayerPrefab;
-    public GameObject playerPrefab;
-
-    private void Awake()
+    public class GameManager : MonoBehaviour
     {
-        if (instance == null)
-        {
-            instance = this;
-        }
-        else if (instance != this)
-        {
-            Debug.Log("Instance already exists, destroying object!");
-            Destroy(this);
-        }
-    }
+        public static GameManager Instance;
 
-    public void SpawnPlayer(int _id, string _username, Vector3 _position, Quaternion _rotation)
-    {
-        GameObject _player;
-        if (_id == Client.instance.myId)
+        public static Dictionary<int, PlayerManager> Players = new Dictionary<int, PlayerManager>();
+
+        public GameObject localPlayerPrefab;
+        public GameObject playerPrefab;
+
+        private void Awake()
         {
-            _player = Instantiate(localPlayerPrefab, _position, _rotation);
-        }
-        else
-        {
-            _player = Instantiate(playerPrefab, _position, _rotation);
+            if (Instance == null)
+            {
+                Instance = this;
+            }
+            else if (Instance != this)
+            {
+                Debug.Log("Instance already exists, destroying object!");
+                Destroy(this);
+            }
         }
 
-        _player.GetComponent<PlayerManager>().id = _id;
-        _player.GetComponent<PlayerManager>().username = _username;
-        players.Add(_id, _player.GetComponent<PlayerManager>());
+        public void SpawnPlayer(int id, string username, Vector3 position, Quaternion rotation)
+        {
+            GameObject player;
+            if (id == Client.Instance.myId)
+            {
+                player = Instantiate(localPlayerPrefab, position, rotation);
+            }
+            else
+            {
+                player = Instantiate(playerPrefab, position, rotation);
+            }
+
+            player.GetComponent<PlayerManager>().id = id;
+            player.GetComponent<PlayerManager>().username = username;
+            Players.Add(id, player.GetComponent<PlayerManager>());
+        }
     }
 }

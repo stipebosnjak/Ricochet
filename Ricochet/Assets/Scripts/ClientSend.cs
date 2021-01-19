@@ -1,46 +1,53 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-public class ClientSend : MonoBehaviour
+namespace Assets.Scripts
 {
-    private static void SendTCPData(Packet _packet)
+    public class ClientSend : MonoBehaviour
     {
-        _packet.WriteLength();
-        Client.instance.tcp.SendData(_packet);
-    }
-
-    private static void SendUDPData(Packet _packet)
-    {
-        _packet.WriteLength();
-        Client.instance.udp.SendData(_packet);
-    }
-
-    #region Packets
-    public static void WelcomeReceived()
-    {
-        using (Packet _packet = new Packet((int)ClientPackets.welcomeReceived))
+        private static void SendTcpData(Packet packet)
         {
-            _packet.Write(Client.instance.myId);
-            _packet.Write(UIManager.instance.usernameField.text);
-
-            SendTCPData(_packet);
+            packet.WriteLength();
+            Client.Instance.Tcp.SendData(packet);
         }
-    }
 
-    public static void PlayerMovement(bool[] _inputs)
-    {
-        using (Packet _packet = new Packet((int)ClientPackets.playerMovement))
+        private static void SendUdpData(Packet packet)
         {
-            _packet.Write(_inputs.Length);
-            foreach (bool _input in _inputs)
+            packet.WriteLength();
+            Client.Instance.Udp.SendData(packet);
+        }
+
+        #region Packets
+
+        public static void WelcomeReceived()
+        {
+            using (Packet packet = new Packet((int) ClientPackets.WelcomeReceived))
             {
-                _packet.Write(_input);
-            }
-            _packet.Write(GameManager.players[Client.instance.myId].transform.rotation);
+                packet.Write(Client.Instance.myId);
+                packet.Write(UiManager.Instance.usernameField.text);
 
-            SendUDPData(_packet);
+                SendTcpData(packet);
+            }
         }
+
+        public static void PlayerMovement(PlayerTransform input)
+        {
+            using (Packet packet = new Packet((int) ClientPackets.PlayerMovement))
+            {
+                packet.Write(input.Position);
+                packet.Write(input.Rotation);
+                packet.Write(GameManager.Players[Client.Instance.myId].transform.rotation);
+
+                SendUdpData(packet);
+            }
+        }
+
+        #endregion
     }
-    #endregion
+
+    public class PlayerTransform
+
+    {
+        public Vector3 Position { get; set; }
+        public Quaternion Rotation { get; set; }
+    }
 }

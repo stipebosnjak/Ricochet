@@ -1,107 +1,103 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace GameServer
+﻿namespace DedicatedServer
 {
     class ServerSend
     {
-        private static void SendTCPData(int _toClient, Packet _packet)
+        private static void SendTcpData(int toClient, Packet packet)
         {
-            _packet.WriteLength();
-            Server.clients[_toClient].tcp.SendData(_packet);
+            packet.WriteLength();
+            Server.Clients[toClient].Tcp.SendData(packet);
         }
 
-        private static void SendUDPData(int _toClient, Packet _packet)
+        private static void SendUdpData(int toClient, Packet packet)
         {
-            _packet.WriteLength();
-            Server.clients[_toClient].udp.SendData(_packet);
+            packet.WriteLength();
+            Server.Clients[toClient].Udp.SendData(packet);
         }
 
-        private static void SendTCPDataToAll(Packet _packet)
+        private static void SendTcpDataToAll(Packet packet)
         {
-            _packet.WriteLength();
+            packet.WriteLength();
             for (int i = 1; i <= Server.MaxPlayers; i++)
             {
-                Server.clients[i].tcp.SendData(_packet);
+                Server.Clients[i].Tcp.SendData(packet);
             }
         }
-        private static void SendTCPDataToAll(int _exceptClient, Packet _packet)
+        private static void SendTcpDataToAll(int exceptClient, Packet packet)
         {
-            _packet.WriteLength();
+            packet.WriteLength();
             for (int i = 1; i <= Server.MaxPlayers; i++)
             {
-                if (i != _exceptClient)
+                if (i != exceptClient)
                 {
-                    Server.clients[i].tcp.SendData(_packet);
+                    Server.Clients[i].Tcp.SendData(packet);
                 }
             }
         }
 
-        private static void SendUDPDataToAll(Packet _packet)
+        private static void SendUdpDataToAll(Packet packet)
         {
-            _packet.WriteLength();
+            packet.WriteLength();
             for (int i = 1; i <= Server.MaxPlayers; i++)
             {
-                Server.clients[i].udp.SendData(_packet);
+                Server.Clients[i].Udp.SendData(packet);
             }
         }
-        private static void SendUDPDataToAll(int _exceptClient, Packet _packet)
+        private static void SendUdpDataToAll(int exceptClient, Packet packet)
         {
-            _packet.WriteLength();
+            packet.WriteLength();
             for (int i = 1; i <= Server.MaxPlayers; i++)
             {
-                if (i != _exceptClient)
+                if (i != exceptClient)
                 {
-                    Server.clients[i].udp.SendData(_packet);
+                    Server.Clients[i].Udp.SendData(packet);
                 }
             }
         }
 
         #region Packets
-        public static void Welcome(int _toClient, string _msg)
+        public static void Welcome(int toClient, string msg)
         {
-            using (Packet _packet = new Packet((int)ServerPackets.welcome))
+            using (Packet packet = new Packet((int)ServerPackets.Welcome))
             {
-                _packet.Write(_msg);
-                _packet.Write(_toClient);
+                packet.Write(msg);
+                packet.Write(toClient);
 
-                SendTCPData(_toClient, _packet);
+                SendTcpData(toClient, packet);
             }
         }
 
-        public static void SpawnPlayer(int _toClient, Player _player)
+        public static void SpawnPlayer(int toClient, Player player)
         {
-            using (Packet _packet = new Packet((int)ServerPackets.spawnPlayer))
+            using (Packet packet = new Packet((int)ServerPackets.SpawnPlayer))
             {
-                _packet.Write(_player.id);
-                _packet.Write(_player.username);
-                _packet.Write(_player.position);
-                _packet.Write(_player.rotation);
+                packet.Write(player.Id);
+                packet.Write(player.Username);
+                packet.Write(player.Position);
+                packet.Write(player.Rotation);
 
-                SendTCPData(_toClient, _packet);
+                SendTcpData(toClient, packet);
             }
         }
 
-        public static void PlayerPosition(Player _player)
+        public static void PlayerPosition(Player player)
         {
-            using (Packet _packet = new Packet((int)ServerPackets.playerPosition))
+            using (Packet packet = new Packet((int)ServerPackets.PlayerPosition))
             {
-                _packet.Write(_player.id);
-                _packet.Write(_player.position);
+                packet.Write(player.Id);
+                packet.Write(player.Position);
 
-                SendUDPDataToAll(_packet);
+                SendUdpDataToAll(packet);
             }
         }
 
-        public static void PlayerRotation(Player _player)
+        public static void PlayerRotation(Player player)
         {
-            using (Packet _packet = new Packet((int)ServerPackets.playerRotation))
+            using (Packet packet = new Packet((int)ServerPackets.PlayerRotation))
             {
-                _packet.Write(_player.id);
-                _packet.Write(_player.rotation);
+                packet.Write(player.Id);
+                packet.Write(player.Rotation);
 
-                SendUDPDataToAll(_player.id, _packet);
+                SendUdpDataToAll(player.Id, packet);
             }
         }
         #endregion
